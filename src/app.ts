@@ -7,6 +7,7 @@ config();
 const app = express();
 
 app.use(express.json()); // Parses JSON bodies
+app.use(express.text());
 app.use(express.urlencoded({ extended: true })); // Parses URL-encoded bodies
 
 
