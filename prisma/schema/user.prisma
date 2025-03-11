@@ -1,0 +1,14 @@
+
+
+model User {
+  id String @id @default(uuid())
+  name String
+  password String 
+  phoneNo String @unique @db.VarChar(10)
+  email String @unique
+  bio String 
+  blocked Boolean
+  status Status
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
