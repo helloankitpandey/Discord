@@ -21,18 +21,20 @@ export const createUser = async(req: any, res: any) => {
 // get All user
 export const getAllUser = async(req: any, res: any) => {
     console.log("radhe radhe");
+    // console.log("Headers:", req.headers); // Debug headers
+
     
     try {
-        console.log('Incoming request:', req.method, req.url, req.headers);
-        const user = await prisma.user.findMany({
-            take: 10
-        });
+        // console.log('Incoming request:', req.method, req.url, req.headers);
+        const user = await prisma.user.findMany();
         console.log('Users fetched:', user.length);
         console.log(user);
         
         res.json(user)
     } catch (error) {
-        // console.log(error);
+        console.log(error);
+        console.error("Error fetching users:", error);
+
         
         res.status(500).json({
             error: error.message
