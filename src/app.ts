@@ -1,24 +1,17 @@
-import  express  from "express";
-import userroute from "./routes/user.routes";
-import { config } from "dotenv";
+import express, { Request, Response } from 'express';
+import { config } from 'dotenv';
+import userRoutes from '@routes/user.routes';
+import { Config } from '@config/config';
 
 config();
 
-const app = express();
-
-app.use(express.json()); // Parses JSON bodies
+export const app = express();
+app.use(express.json());
 app.use(express.text());
-app.use(express.urlencoded({ extended: true })); // Parses URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
 
+app.use('/api/v1/user', userRoutes);
 
-app.use("/user", userroute);
-
-app.listen(process.env.PORT, () => {
-    console.log("Successfully Running");
-} )
-
-// crud-operation krna hai
-// read-get
-// creat-post
-// updated-put
-// delete-delete
+app.listen(Config.PORT, () => {
+    console.log('Successfully Running ', Config.PORT);
+});

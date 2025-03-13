@@ -1,22 +1,25 @@
-import express from "express";
-import { createUser, deleteUser, getAllUser, getSingleUser, updateUser } from "../controller/userRoutes";
+import express from 'express';
+import {
+    createUser,
+    deleteUser,
+    getAllUser,
+    getSingleUser,
+    updateUser,
+} from '@controllers/user.controller';
+import { zodValidation } from 'middleware/zod.middleware';
+import { createDto, getDto, updateDto } from 'dto/user.dto';
 
-const userroute = express.Router();
+const userRoutes = express.Router();
 
-// userroute.get("/", (req, res) => {
-//     res.send("Succesfully")
-// })
-// create a new user 
-userroute.post("/post", createUser )
+// create a new user
+userRoutes.post('/', zodValidation(createDto), createUser);
 // get all user
-userroute.get("/get", getAllUser)
+userRoutes.get('/', getAllUser);
 // get user by id
-userroute.get("/get/:id", getSingleUser)
-// update user 
-userroute.put("/:id", updateUser)
+userRoutes.get('/:id', zodValidation(getDto), getSingleUser);
+// update user
+userRoutes.put('/:id', zodValidation(updateDto), updateUser);
 // delete user
-userroute.delete("/:id", deleteUser)
+userRoutes.delete('/:id', zodValidation(getDto), deleteUser);
 
-
-
-export default userroute;
+export default userRoutes;
