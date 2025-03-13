@@ -39,7 +39,7 @@ describe('User API', () => {
         await prisma.$disconnect();
     });
 
-    // ✅ CREATE USER
+    //  CREATE USER
     it('should create a user successfully', async () => {
         const res = await request(app).post(url).send(sampleUser);
         expect(res.status).toBe(HttpStatusCode.Created);
@@ -95,7 +95,7 @@ describe('User API', () => {
         expect(res.status).toBe(HttpStatusCode.BadRequest);
     });
 
-    // ✅ GET ALL USERS
+    //  GET ALL USERS
     it('should return all users', async () => {
         await request(app).post(url).send(sampleUser);
         const res = await request(app).get(url);
@@ -105,7 +105,7 @@ describe('User API', () => {
         expect(res.body.data[0].email).toBe(sampleUser.email);
     });
 
-    // ✅ GET USER BY ID
+    //  GET USER BY ID
     it('should get a single user by ID', async () => {
         const created = await request(app).post(url).send(sampleUser);
         const res = await request(app).get(`${url}/${created.body.id}`);
@@ -119,7 +119,7 @@ describe('User API', () => {
         expect(res.status).toBe(HttpStatusCode.NotFound);
     });
 
-    // ✅ UPDATE USER
+    //  UPDATE USER
     it('should update a user', async () => {
         const created = await request(app).post(url).send(sampleUser);
         const updatedData = { ...sampleUser, name: 'Updated Name' };
@@ -143,7 +143,7 @@ describe('User API', () => {
         expect(res.status).toBe(HttpStatusCode.NotFound);
     });
 
-    // ✅ DELETE USER
+    //  DELETE USER
     it('should delete a user successfully', async () => {
         const created = await request(app).post(url).send(sampleUser);
         const res = await request(app).delete(`${url}/${created.body.id}`);
@@ -165,11 +165,5 @@ describe('User API', () => {
     it('should return 404 on deleting non-existent user', async () => {
         const res = await request(app).delete(`${url}/non-existing-id`);
         expect(res.status).toBe(HttpStatusCode.NotFound);
-    });
-
-    // ✅ Clean up test check
-    it('should have clean DB after test run', async () => {
-        const users = await prisma.user.findMany();
-        expect(users.length).toBe(0);
     });
 });

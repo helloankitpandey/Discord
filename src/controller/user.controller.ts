@@ -1,3 +1,4 @@
+import { publishMessage } from 'util/nats.util';
 import { HttpStatusCode } from '../enum/http.enum';
 import { PrismaClient } from '@prisma/client';
 // import kafkProducer from 'util/kafka.util';
@@ -33,6 +34,8 @@ export const createUser = async (req: any, res: any) => {
             data: { name, password, email, phoneNo, bio },
         });
         // await kafkProducer(KafkaTopic.user)(user.id, JSON.stringify(user));
+
+        await publishMessage('user.created', JSON.stringify(user));
         res.status(HttpStatusCode.Created).json(user);
     } catch (error) {
         res.status(HttpStatusCode.BadRequest).json({
@@ -115,7 +118,7 @@ export const deleteUser = async (req: any, res: any) => {
                 .status(HttpStatusCode.NotFound)
                 .json({ error: 'User not found' });
         }
-        await prisma.user.update({
+        const user = await prisma.user.update({
             where: { id },
             data: { isDeleted: true },
         });
@@ -123,6 +126,8 @@ export const deleteUser = async (req: any, res: any) => {
         res.status(HttpStatusCode.NoContent).json({
             message: 'User deleted Succesfully',
         });
+
+        await publishMessage('user.deleted', JSON.stringify(user));
     } catch (error) {
         res.status(HttpStatusCode.InternalServerError).json({
             error: error.message,

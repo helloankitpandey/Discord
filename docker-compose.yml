@@ -1,0 +1,47 @@
+services:
+    build:
+        container_name: build
+        build: .
+        image: dubeyanand/auth-discord:01
+        ports:
+            - '3000:3000'
+        environment:
+            PORT: 3000
+            NATS_URI: nats://nats:4222
+            DATABASE_URL: postgres://user1:password1@postgres1:5432/discord
+
+    postgres1:
+        image: postgres:latest
+        container_name: postgres1
+        restart: always
+        environment:
+            POSTGRES_USER: user1
+            POSTGRES_PASSWORD: password1
+            POSTGRES_DB: discord
+        ports:
+            - '5432:5432'
+        volumes:
+            - postgres1_data:/var/lib/postgresql/data
+
+    nats:
+        image: nats:latest
+        container_name: nats
+        ports:
+            - '4222:4222'
+            - '6222:6222'
+            - '8222:8222'
+        volumes:
+            - nats_data:/nats/data
+
+    redis:
+        image: redis:latest
+        container_name: redis
+        ports:
+            - '6379:6379'
+        volumes:
+            - redis_data:/data
+
+volumes:
+    postgres1_data:
+    nats_data:
+    redis_data:
