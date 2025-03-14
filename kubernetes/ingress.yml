@@ -2,18 +2,20 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: discord-ingress
+  namespace: discord
+  labels:
+    name: discord-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: "tws.com"
+  - host: discord.com
     http:
       paths:
-      - path: /auth
-        pathType: Prefix
+      - pathType: Prefix
+        path: "/"
         backend:
           service:
             name: discord-auth-service
-            port:
+            port: 
               number: 3000
-      

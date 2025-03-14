@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: discord-auth
-          image: dubeyanand/auth-discord:01
+          image: dubeyanand/auth-discord:latest
           ports:
             - containerPort: 3000
           env:
@@ -35,4 +35,6 @@ spec:
             requests:
               cpu: 250m
               memory: 256Mi
-            
+
+
+ 

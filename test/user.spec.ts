@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { app } from '../src/app';
+import app from '../src/app';
 import request from 'supertest';
 import { HttpStatusCode } from '../src/enum/http.enum';
 import {
@@ -39,23 +39,34 @@ describe('User API', () => {
         await prisma.$disconnect();
     });
 
-    //  CREATE USER
     it('should create a user successfully', async () => {
-        const res = await request(app).post(url).send(sampleUser);
+        const res = await request(app).post(`${url}/create`).send(sampleUser);
         expect(res.status).toBe(HttpStatusCode.Created);
 
         const user = await prisma.user.findUnique({
-            where: { id: res.body.id },
+            where: { id: res.body.user.id },
         });
         expect(user).toBeDefined();
         expect(user?.email).toBe(sampleUser.email);
         expect(user?.phoneNo).toBe(sampleUser.phoneNo);
         expect(user?.name).toBe(sampleUser.name);
-        expect(user?.isDeleted).toBe(false); // if soft delete
+        expect(user?.isDeleted).toBe(false);
     });
+    it('should login successfully with correct credentials', async () => {
+        // Pehle ek user bana le
+        await request(app).post(`${url}/create`).send(sampleUser);
 
+        // Fir login kar
+        const res = await request(app).post(`${url}/login`).send({
+            email: sampleUser.email,
+            password: sampleUser.password,
+        });
+
+        expect(res.status).toBe(HttpStatusCode.Ok);
+        expect(res.body).toHaveProperty('user');
+    });
     it('should not create user with missing required fields', async () => {
-        const res = await request(app).post(url).send({
+        const res = await request(app).post(`${url}/create`).send({
             name: 'Incomplete User',
         });
         expect(res.status).toBe(HttpStatusCode.BadRequest);
@@ -66,8 +77,8 @@ describe('User API', () => {
     });
 
     it('should not allow duplicate emails', async () => {
-        await request(app).post(url).send(sampleUser);
-        const res = await request(app).post(url).send(sampleUser);
+        await request(app).post(`${url}/create`).send(sampleUser);
+        const res = await request(app).post(`${url}/create`).send(sampleUser);
         expect(res.status).toBe(HttpStatusCode.BadRequest);
         expect(res.body).toHaveProperty('error');
 
@@ -77,7 +88,7 @@ describe('User API', () => {
 
     it('should reject invalid email format', async () => {
         const res = await request(app)
-            .post(url)
+            .post(`${url}/create`)
             .send({
                 ...sampleUser,
                 email: 'invalid-email',
@@ -87,7 +98,7 @@ describe('User API', () => {
 
     it('should reject short password', async () => {
         const res = await request(app)
-            .post(url)
+            .post(`${url}/create`)
             .send({
                 ...sampleUser,
                 password: '123',
@@ -95,23 +106,23 @@ describe('User API', () => {
         expect(res.status).toBe(HttpStatusCode.BadRequest);
     });
 
-    //  GET ALL USERS
     it('should return all users', async () => {
-        await request(app).post(url).send(sampleUser);
-        const res = await request(app).get(url);
+        await request(app).post(`${url}/create`).send(sampleUser);
+        const res = await request(app).get(`${url}/all`);
         expect(res.status).toBe(HttpStatusCode.Ok);
         expect(Array.isArray(res.body.data)).toBe(true);
         expect(res.body.data.length).toBe(1);
         expect(res.body.data[0].email).toBe(sampleUser.email);
     });
 
-    //  GET USER BY ID
     it('should get a single user by ID', async () => {
-        const created = await request(app).post(url).send(sampleUser);
-        const res = await request(app).get(`${url}/${created.body.id}`);
+        const created = await request(app)
+            .post(`${url}/create`)
+            .send(sampleUser);
+        const res = await request(app).get(`${url}/${created.body.user.id}`);
         expect(res.status).toBe(HttpStatusCode.Ok);
-        expect(res.body).toHaveProperty('id');
-        expect(res.body.email).toBe(sampleUser.email);
+        expect(res.body.user).toHaveProperty('id');
+        expect(res.body.user.email).toBe(sampleUser.email);
     });
 
     it('should return 404 for non-existent user ID', async () => {
@@ -119,19 +130,20 @@ describe('User API', () => {
         expect(res.status).toBe(HttpStatusCode.NotFound);
     });
 
-    //  UPDATE USER
     it('should update a user', async () => {
-        const created = await request(app).post(url).send(sampleUser);
+        const created = await request(app)
+            .post(`${url}/create`)
+            .send(sampleUser);
         const updatedData = { ...sampleUser, name: 'Updated Name' };
         const res = await request(app)
-            .put(`${url}/${created.body.id}`)
+            .put(`${url}/${created.body.user.id}`)
             .send(updatedData);
 
         expect(res.status).toBe(HttpStatusCode.Accepted);
-        expect(res.body.name).toBe('Updated Name');
+        expect(res.body.user.name).toBe('Updated Name');
 
         const dbUser = await prisma.user.findUnique({
-            where: { id: created.body.id },
+            where: { id: created.body.user.id },
         });
         expect(dbUser?.name).toBe('Updated Name');
     });
@@ -143,17 +155,17 @@ describe('User API', () => {
         expect(res.status).toBe(HttpStatusCode.NotFound);
     });
 
-    //  DELETE USER
     it('should delete a user successfully', async () => {
-        const created = await request(app).post(url).send(sampleUser);
-        const res = await request(app).delete(`${url}/${created.body.id}`);
+        const created = await request(app)
+            .post(`${url}/create`)
+            .send(sampleUser);
+        const res = await request(app).delete(`${url}/${created.body.user.id}`);
         expect([HttpStatusCode.Ok, HttpStatusCode.NoContent]).toContain(
             res.status
         );
 
-        // Check if user is soft deleted or hard deleted
         const dbUser = await prisma.user.findUnique({
-            where: { id: created.body.id },
+            where: { id: created.body.user.id },
         });
         if (dbUser) {
             expect(dbUser.isDeleted).toBe(true);

@@ -1,6 +1,7 @@
 import { publishMessage } from 'util/nats.util';
 import { HttpStatusCode } from '../enum/http.enum';
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcrypt';
 // import kafkProducer from 'util/kafka.util';
 
 const prisma = new PrismaClient();
@@ -29,16 +30,57 @@ export const createUser = async (req: any, res: any) => {
                 .status(HttpStatusCode.BadRequest)
                 .json({ error: 'User already exists' });
         }
-
+        const hashedPassword = await bcrypt.hash(password, 10);
         const user = await prisma.user.create({
-            data: { name, password, email, phoneNo, bio },
+            data: { name, password: hashedPassword, email, phoneNo, bio },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phoneNo: true,
+                bio: true,
+            },
         });
-        // await kafkProducer(KafkaTopic.user)(user.id, JSON.stringify(user));
+        // await kafkProducer(KafkaTopic.user)(user.id, JSON.stringify({user}));
 
-        await publishMessage('user.created', JSON.stringify(user));
-        res.status(HttpStatusCode.Created).json(user);
+        await publishMessage('user.created', JSON.stringify({ user }));
+        res.status(HttpStatusCode.Created).json({ user });
     } catch (error) {
         res.status(HttpStatusCode.BadRequest).json({
+            error: error.message,
+        });
+    }
+};
+
+export const login = async (req: any, res: any) => {
+    try {
+        const { email, password } = req.body;
+        const user = await prisma.user.findFirst({
+            where: { email, isDeleted: false },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phoneNo: true,
+                bio: true,
+                password: true,
+            },
+        });
+        if (!user) {
+            return res
+                .status(HttpStatusCode.NotFound)
+                .json({ error: 'User not found' });
+        }
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res
+                .status(HttpStatusCode.Unauthorized)
+                .json({ error: 'Invalid password' });
+        }
+        user.password = '';
+        res.status(HttpStatusCode.Ok).json({ user });
+    } catch (error) {
+        res.status(HttpStatusCode.InternalServerError).json({
             error: error.message,
         });
     }
@@ -49,8 +91,15 @@ export const getAllUser = async (req: any, res: any) => {
     try {
         const user = await prisma.user.findMany({
             where: { isDeleted: false },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phoneNo: true,
+                bio: true,
+            },
         });
-        res.status(HttpStatusCode.Ok).json({ data: [...user] });
+        res.status(HttpStatusCode.Ok).json({ data: user });
     } catch (error) {
         console.error('Error fetching users:', error);
         res.status(HttpStatusCode.InternalServerError).json({
@@ -65,12 +114,19 @@ export const getSingleUser = async (req: any, res: any) => {
         const { id } = req.params;
         const user = await prisma.user.findUnique({
             where: { id, isDeleted: false },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phoneNo: true,
+                bio: true,
+            },
         });
         if (!user)
             return res
                 .status(HttpStatusCode.NotFound)
                 .json({ error: 'User not found' });
-        res.status(HttpStatusCode.Ok).json(user);
+        res.status(HttpStatusCode.Ok).json({ user });
     } catch (error) {
         res.status(HttpStatusCode.InternalServerError).json({
             error: error.message,
@@ -85,19 +141,41 @@ export const updateUser = async (req: any, res: any) => {
         const { name, password, email, phoneNo, bio } = req.body;
         const existingUser = await prisma.user.findUnique({
             where: { id, isDeleted: false },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phoneNo: true,
+                bio: true,
+            },
         });
-
         if (!existingUser) {
             res.status(HttpStatusCode.NotFound).json({
                 error: 'User not found',
             });
             return;
         }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const updated = {
+            id,
+            name,
+            password: hashedPassword,
+            email,
+            phoneNo,
+            bio,
+        };
         const user = await prisma.user.update({
             where: { id },
-            data: { name, password, email, phoneNo, bio },
+            data: updated,
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phoneNo: true,
+                bio: true,
+            },
         });
-        res.status(HttpStatusCode.Accepted).json(user);
+        res.status(HttpStatusCode.Accepted).json({ user });
     } catch (error) {
         res.status(HttpStatusCode.BadRequest).json({
             error: error.message,
@@ -111,6 +189,13 @@ export const deleteUser = async (req: any, res: any) => {
         const { id } = req.params;
         const existingUser = await prisma.user.findUnique({
             where: { id, isDeleted: false },
+            select: {
+                id: true,
+                name: true,
+                email: true,
+                phoneNo: true,
+                bio: true,
+            },
         });
 
         if (!existingUser) {
@@ -127,7 +212,7 @@ export const deleteUser = async (req: any, res: any) => {
             message: 'User deleted Succesfully',
         });
 
-        await publishMessage('user.deleted', JSON.stringify(user));
+        await publishMessage('user.deleted', JSON.stringify({ user }));
     } catch (error) {
         res.status(HttpStatusCode.InternalServerError).json({
             error: error.message,

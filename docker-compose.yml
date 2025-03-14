@@ -1,5 +1,5 @@
 services:
-    build:
+    backend:
         container_name: build
         build: .
         image: dubeyanand/auth-discord:01
@@ -8,9 +8,9 @@ services:
         environment:
             PORT: 3000
             NATS_URI: nats://nats:4222
-            DATABASE_URL: postgres://user1:password1@postgres1:5432/discord
+            DATABASE_URL: postgres://user1:password1@:5432/discord
 
-    postgres1:
+    database:
         image: postgres:latest
         container_name: postgres1
         restart: always

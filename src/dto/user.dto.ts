@@ -28,3 +28,10 @@ export const getDto = z.object({
         id: z.string().min(3).max(255),
     }),
 });
+
+export const loginDto = z.object({
+    body: z.object({
+        email: z.string().email(),
+        password: z.string().min(8).max(255),
+    }),
+});
