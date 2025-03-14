@@ -13,9 +13,16 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "/auth"
         backend:
           service:
             name: discord-auth-service
-            port: 
+            port:
               number: 3000
+      - pathType: Prefix
+        path: "/auth/postgres"
+        backend:
+          service:
+            name: postgres
+            port:
+              number: 5432
