@@ -11,7 +11,7 @@ metadata:
 spec:
   ingressClassName: discord
   rules:
-    http:
+  - http:
       paths:
       - pathType: Prefix
         path: "/auth"
