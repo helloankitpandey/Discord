@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: discord.com
+  - host: 45.8.133.227 
     http:
       paths:
       - pathType: Prefix
