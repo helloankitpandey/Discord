@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: 45.8.133.227 
+  - host: 0.0.0.0
     http:
       paths:
       - pathType: Prefix
