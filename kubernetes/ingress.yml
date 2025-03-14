@@ -11,7 +11,6 @@ metadata:
 spec:
   ingressClassName: discord
   rules:
-  - host: 0.0.0.0
     http:
       paths:
       - pathType: Prefix
