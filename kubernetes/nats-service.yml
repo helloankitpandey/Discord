@@ -5,7 +5,7 @@ metadata:
   namespace: discord
 spec:
   selector:
-    app: nats
+    app: nats-statefulset
   ports:
     - protocol: TCP
       port: 4222
