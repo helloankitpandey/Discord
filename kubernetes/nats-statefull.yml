@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: nats-statefulset
+  namespace: discord
+spec:
+  selector:
+    matchLabels:
+      app: nats
+  serviceName: nats
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nats
+    spec:
+      containers:
+        - name: nats
+          image: nats:latest
+          ports:
+          - containerPort: 4222
+            name: nats
+          volumeMounts:
+          - name: nats-pvc
+            mountPath: /data
+      volumes:
+        - name: nats-pvc
+          persistentVolumeClaim:
+            claimName: nats-pvc
+
