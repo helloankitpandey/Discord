@@ -9,7 +9,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 
 spec:
-  ingressClassName: discord
+  ingressClassName: nginx
   rules:
   - http:
       paths:
