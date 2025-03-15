@@ -1,29 +1,39 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: nats
+  name: nats-statefulset
   namespace: discord
 spec:
-  selector:
-    matchLabels:
-      app: nats
   serviceName: nats
   replicas: 1
+  selector:
+    matchLabels:
+      app: discord-auth-nats
   template:
     metadata:
       labels:
-        app: nats
+        app: discord-auth-nats
     spec:
       containers:
         - name: nats
           image: nats:latest
           ports:
-          - containerPort: 4222
-          - containerPort: 6222
-          - containerPort: 8222
+            - containerPort: 4222
+          env:
+            - name: NATS_USER
+              value: "nats"
+            - name: NATS_PASSWORD
+              value: "password"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
           volumeMounts:
-          - name: nats-pvc
-            mountPath: /data
+            - name: nats-pvc
+              mountPath: /data
       volumes:
         - name: nats-pvc
           persistentVolumeClaim:
