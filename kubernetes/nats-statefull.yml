@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: nats-statefulset
+  name: discord-auth-nats
   namespace: discord
 spec:
   serviceName: nats
