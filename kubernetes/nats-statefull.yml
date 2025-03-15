@@ -6,9 +6,9 @@ metadata:
 spec:
   selector:
     matchLabels:
-      app: nats
+      app: nats-statefulset
   serviceName: nats-service 
-  replicas: 1
+  replicas: 0
   template:
     metadata:
       labels:
