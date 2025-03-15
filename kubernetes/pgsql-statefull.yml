@@ -4,7 +4,7 @@ metadata:
   name: postgresql-statefulset
   namespace: discord
 spec:
-  serviceName: "postgresql"
+  serviceName: postgresql
   replicas: 2
   selector:
     matchLabels:

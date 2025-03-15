@@ -12,6 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/v1/user', userRoutes);
 
+app.get('/healthz', (req, res) => {
+    res.send('OK');
+});
+
 app.listen(Config.PORT, () => {
     console.log('Successfully Running ', Config.PORT);
 });
