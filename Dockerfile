@@ -15,5 +15,4 @@ RUN bunx prisma generate
 EXPOSE 3000
 
 # Use a shell form to allow multiple commands with `&&`
-
 CMD bunx prisma migrate deploy && bun src/app.ts

@@ -6,6 +6,8 @@ services:
         ports:
             - '3000:3000'
         environment:
+            RUN_TESTS: 'true'
+            MIGRATE: 'true'
             PORT: 3000
             NATS_URI: nats://nats:4222
             DATABASE_URL: postgres://user1:password1@database:5432/discord
