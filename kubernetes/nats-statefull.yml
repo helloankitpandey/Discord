@@ -7,8 +7,8 @@ spec:
   selector:
     matchLabels:
       app: nats
-  serviceName: nats
-  replicas: 2
+  serviceName: nats-service
+  replicas: 1
   template:
     metadata:
       labels:
