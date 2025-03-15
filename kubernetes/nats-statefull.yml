@@ -1,12 +1,12 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: nats-statefulset
+  name: nats
   namespace: discord
 spec:
   selector:
     matchLabels:
-      app: nats-statefulset
+      app: nats
   serviceName: nats-service 
   replicas: 1
   template:
