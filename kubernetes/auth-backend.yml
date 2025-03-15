@@ -30,7 +30,7 @@ spec:
 
         - name: init-test
           image: dubeyanand/auth-discord:latest
-          command: ["/bin/sh", "-c", "bunx prisma migrate deploy && bun test"]
+          command: ["/bin/sh", "-c", "bunx prisma generate && bunx prisma migrate deploy && bun test"]
 
           env:
             - name: PORT
