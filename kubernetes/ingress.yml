@@ -14,14 +14,14 @@ spec:
   - http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "/auth"
         backend:
           service:
             name: discord-auth-service
             port:
               number: 3000
       - pathType: Prefix
-        path: "/postgres"
+        path: "/"
         backend:
           service:
             name: postgres
