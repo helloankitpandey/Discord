@@ -22,7 +22,7 @@ spec:
             - name: PORT
               value: "3000"
             - name: DATABASE_URL
-              value: "postgresql://user1:password1@postgres:5432/discord"
+              value: "postgresql://user1:password1@postgresql:5432/discord"
             - name: NATS_URI
               value: "nats://nats-service:4222"
             - name: JWT_SECRET
@@ -34,7 +34,7 @@ spec:
             - name: PORT
               value: "3000"
             - name: DATABASE_URL
-              value: "postgresql://user1:password1@postgres:5432/discord_test"
+              value: "postgresql://user1:password1@postgresql:5432/discord_test"
             - name: NATS_URI
               value: "nats://nats-service:4222"
             - name: JWT_SECRET
