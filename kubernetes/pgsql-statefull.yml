@@ -5,7 +5,7 @@ metadata:
   namespace: discord
 spec:
   serviceName: postgresql
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: discord-auth-postgresql
@@ -14,31 +14,6 @@ spec:
       labels:
         app: discord-auth-postgresql
     spec:
-      initContainers:
-        - name: init-migration
-          image: dubeyanand/auth-discord:latest
-          command: ["bunx", "prisma", "migrate", "deploy"]
-          env:
-            - name: PORT
-              value: "3000"
-            - name: DATABASE_URL
-              value: "postgresql://user1:password1@postgresql:5432/discord"
-            - name: NATS_URI
-              value: "nats://nats-service:4222"
-            - name: JWT_SECRET
-              value: "your-jwt-secret"
-        - name: init-test
-          image: dubeyanand/auth-discord:latest
-          command: ["/bin/sh", "-c", "bunx prisma generate && bunx prisma migrate deploy && bun test"]
-          env:
-            - name: PORT
-              value: "3000"
-            - name: DATABASE_URL
-              value: "postgresql://user1:password1@postgresql:5432/discord_test"
-            - name: NATS_URI
-              value: "nats://nats-service:4222"
-            - name: JWT_SECRET
-              value: "your-jwt-secret"
       containers:
         - name: postgresql
           image: postgres:latest
