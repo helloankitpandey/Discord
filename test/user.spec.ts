@@ -160,9 +160,7 @@ describe('User API', () => {
             .post(`${url}/create`)
             .send(sampleUser);
         const res = await request(app).delete(`${url}/${created.body.user.id}`);
-        expect([HttpStatusCode.Ok, HttpStatusCode.NoContent]).toContain(
-            res.status
-        );
+        expect([HttpStatusCode.Ok, HttpStatusCode.Ok]).toContain(res.status);
 
         const dbUser = await prisma.user.findUnique({
             where: { id: created.body.user.id },

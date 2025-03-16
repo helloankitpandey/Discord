@@ -15,22 +15,45 @@ export const createUser = async (req: any, res: any) => {
                 OR: [
                     {
                         email: email,
-                        isDeleted: false,
                     },
                     {
                         phoneNo: phoneNo,
-                        isDeleted: false,
                     },
                 ],
             },
         });
 
-        if (existingUser) {
-            return res
-                .status(HttpStatusCode.BadRequest)
-                .json({ error: 'User already exists' });
-        }
         const hashedPassword = await bcrypt.hash(password, 10);
+        if (existingUser) {
+            if (existingUser.isDeleted) {
+                const update_user = await prisma.user.update({
+                    where: { id: existingUser.id },
+                    data: {
+                        isDeleted: false,
+                        name,
+                        password: hashedPassword,
+                        email,
+                        phoneNo,
+                        bio,
+                    },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true,
+                        phoneNo: true,
+                        bio: true,
+                    },
+                });
+
+                return res
+                    .status(HttpStatusCode.Ok)
+                    .json({ user: update_user });
+            } else {
+                return res
+                    .status(HttpStatusCode.BadRequest)
+                    .json({ error: 'User already exists' });
+            }
+        }
         const user = await prisma.user.create({
             data: { name, password: hashedPassword, email, phoneNo, bio },
             select: {
@@ -41,6 +64,7 @@ export const createUser = async (req: any, res: any) => {
                 bio: true,
             },
         });
+
         // await kafkProducer(KafkaTopic.user)(user.id, JSON.stringify({user}));
 
         await publishMessage('user.created', JSON.stringify({ user }));
@@ -208,7 +232,7 @@ export const deleteUser = async (req: any, res: any) => {
             data: { isDeleted: true },
         });
 
-        res.status(HttpStatusCode.NoContent).json({
+        res.status(HttpStatusCode.Ok).json({
             message: 'User deleted Succesfully',
         });
 
