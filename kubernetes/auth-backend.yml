@@ -5,7 +5,7 @@ metadata:
   namespace: discord 
 
 spec:
-  replicas: 3
+  replicas: 10
   selector:
     matchLabels:
       app: discord-auth
