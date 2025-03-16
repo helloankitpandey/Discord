@@ -21,7 +21,7 @@ spec:
             port:
               number: 3000
       - pathType: Prefix
-        path: "/auth/postgres"
+        path: "/postgres"
         backend:
           service:
             name: postgres
