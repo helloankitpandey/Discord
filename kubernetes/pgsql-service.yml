@@ -4,6 +4,7 @@ metadata:
   name: postgres 
   namespace: discord
 spec:
+  type: LoadBalancer
   selector:
     app: discord-auth-postgresql
   ports:
