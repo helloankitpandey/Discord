@@ -2,11 +2,9 @@ import { publishMessage } from 'util/nats.util';
 import { HttpStatusCode } from '../enum/http.enum';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
-// import kafkProducer from 'util/kafka.util';
 
 const prisma = new PrismaClient();
 
-// crated user
 export const createUser = async (req: any, res: any) => {
     try {
         const { name, password, email, phoneNo, bio } = req.body;
@@ -65,6 +63,7 @@ export const createUser = async (req: any, res: any) => {
             },
         });
 
+        await publishMessage('user.created', JSON.stringify({ user }));
         res.status(HttpStatusCode.Created).json({ user });
     } catch (error) {
         res.status(HttpStatusCode.BadRequest).json({
@@ -107,7 +106,6 @@ export const login = async (req: any, res: any) => {
     }
 };
 
-// get All user
 export const getAllUser = async (req: any, res: any) => {
     try {
         const user = await prisma.user.findMany({
@@ -129,7 +127,6 @@ export const getAllUser = async (req: any, res: any) => {
     }
 };
 
-// get single user by ID
 export const getSingleUser = async (req: any, res: any) => {
     try {
         const { id } = req.params;
@@ -155,7 +152,6 @@ export const getSingleUser = async (req: any, res: any) => {
     }
 };
 
-// updated user by their id
 export const updateUser = async (req: any, res: any) => {
     try {
         const { id } = req.params;
@@ -204,7 +200,6 @@ export const updateUser = async (req: any, res: any) => {
     }
 };
 
-// deleteUser by id
 export const deleteUser = async (req: any, res: any) => {
     try {
         const { id } = req.params;

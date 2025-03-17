@@ -39,6 +39,10 @@ spec:
               value: "postgresql://user1:password1@postgres:5432/discord_test"
             - name: NATS_URI
               value: "nats://nats-service:4222"
+            - name: NATS_USER
+              value: "nats"
+            - name: NATS_PASSWORD
+              value: "password"
             - name: JWT_SECRET
               value: "your-jwt-secret"
 
