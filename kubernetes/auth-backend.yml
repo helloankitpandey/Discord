@@ -51,6 +51,7 @@ spec:
           image: dubeyanand/auth-discord:latest
           ports:
             - containerPort: 3000
+
           env:
             - name: PORT
               value: "3000"
