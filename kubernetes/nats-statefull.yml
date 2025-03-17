@@ -32,17 +32,10 @@ spec:
               cpu: 250m
               memory: 256Mi
           volumeMounts:
-            - name: nats-pvc
+            - name: storage-pvc
               mountPath: /data
       volumes:
-        - name: nats-pvc
+        - name: storage-pvc
           persistentVolumeClaim:
-            claimName: nats-pvc
-  volumeClaimTemplates:
-    - metadata:
-        name: nats-pvc
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 1Gi
+            claimName: storage-pvc
+  

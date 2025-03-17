@@ -36,17 +36,9 @@ spec:
               cpu: 250m
               memory: 256Mi
           volumeMounts:
-            - name: postgres-pvc
+            - name: storage-pvc
               mountPath: /var/lib/postgresql/data
       volumes:
-        - name: postgres-pvc
+        - name: storage-pvc
           persistentVolumeClaim:
-            claimName: postgres-pvc
-  volumeClaimTemplates:
-    - metadata:
-        name: postgres-pvc
-      spec:
-        accessModes: [ "ReadWriteOnce" ]
-        resources:
-          requests:
-            storage: 5Gi
+            claimName: storage-pvc
