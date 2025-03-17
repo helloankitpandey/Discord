@@ -51,7 +51,6 @@ spec:
           image: dubeyanand/auth-discord:latest
           ports:
             - containerPort: 3000
-
           env:
             - name: PORT
               value: "3000"
@@ -61,12 +60,8 @@ spec:
               value: "nats://nats-service:4222"
             - name: JWT_SECRET
               value: "your-jwt-secret"
-
-          resources:
-            limits:
-              cpu: 800m
-              memory: 1Gi
-            requests:
-              cpu: 450m
-              memory: 512mi
- 
+            - name: NATS_USER
+              value: "nats"
+            - name: NATS_PASSWORD
+              value: "password"
+          
