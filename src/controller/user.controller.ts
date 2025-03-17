@@ -2,6 +2,7 @@ import { publishMessage } from 'util/nats.util';
 import { HttpStatusCode } from '../enum/http.enum';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import { Config } from '@config/config';
 
 const prisma = new PrismaClient();
 
@@ -62,8 +63,8 @@ export const createUser = async (req: any, res: any) => {
                 bio: true,
             },
         });
-
-        await publishMessage('user.created', JSON.stringify({ user }));
+        if (Config.NODE_ENV === 'test')
+            await publishMessage('user.created', JSON.stringify({ user }));
         res.status(HttpStatusCode.Created).json({ user });
     } catch (error) {
         res.status(HttpStatusCode.BadRequest).json({

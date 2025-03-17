@@ -2,6 +2,7 @@ import 'dotenv/config';
 
 export const Config = {
     PORT: process.env.PORT || 3000,
+    NODE_ENV: process.env.NODE_ENV || 'dev',
     NATS: process.env.NATS || 'nats://localhost:4222',
     NATS_USER: process.env.NATS_USER || 'nats',
     NATS_PASSWORD: process.env.NATS_PASSWORD || 'password',
