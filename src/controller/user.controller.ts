@@ -65,10 +65,7 @@ export const createUser = async (req: any, res: any) => {
             },
         });
 
-        // await kafkProducer(KafkaTopic.user)(user.id, JSON.stringify({user}));
-
         res.status(HttpStatusCode.Created).json({ user });
-        await publishMessage('user.created', JSON.stringify({ user }));
     } catch (error) {
         res.status(HttpStatusCode.BadRequest).json({
             error: error.message,
