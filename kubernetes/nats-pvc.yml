@@ -4,9 +4,8 @@ metadata:
   name: nats-pvc
   namespace: discord
 spec:
+  accessModes:
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
