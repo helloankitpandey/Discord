@@ -42,3 +42,11 @@ spec:
         - name: postgres-pvc
           persistentVolumeClaim:
             claimName: postgres-pvc
+  volumeClaimTemplates:
+    - metadata:
+        name: postgres-pvc
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 5Gi

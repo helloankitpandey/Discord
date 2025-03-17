@@ -38,4 +38,11 @@ spec:
         - name: nats-pvc
           persistentVolumeClaim:
             claimName: nats-pvc
-
+  volumeClaimTemplates:
+    - metadata:
+        name: nats-pvc
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi

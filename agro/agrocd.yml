@@ -1,0 +1,14 @@
+project: default
+source:
+  repoURL: https://github.com/helloankitpandey/Discord.git
+  path: kubernetes
+  targetRevision: anand
+destination:
+  server: https://kubernetes.default.svc
+  namespace: discord
+syncPolicy:
+  automated:
+    prune: true
+    selfHeal: true
+  syncOptions:
+    - CreateNamespace=true
