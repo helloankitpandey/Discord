@@ -26,6 +26,8 @@ spec:
               value: "password1"
             - name: POSTGRES_DB
               value: "discord"
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
           resources:
             limits:
               cpu: 500m
