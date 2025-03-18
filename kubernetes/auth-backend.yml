@@ -67,4 +67,10 @@ spec:
               value: "nats"
             - name: NATS_PASSWORD
               value: "password"
-          
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
