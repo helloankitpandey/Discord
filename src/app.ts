@@ -3,6 +3,7 @@ import { config } from 'dotenv';
 import userRoutes from '@routes/user.routes';
 import { Config } from '@config/config';
 import { HttpStatusCode } from '@enum/http.enum';
+import os from 'os';
 
 config();
 
@@ -14,7 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api/v1/user', userRoutes);
 
 app.get('/healthz', (req, res) => {
-    res.status(HttpStatusCode.Ok).send('OK');
+    res.status(HttpStatusCode.Ok).send(os.hostname());
 });
 
 app.listen(Config.PORT, () => {

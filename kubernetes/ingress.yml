@@ -20,6 +20,7 @@ spec:
             name: discord-auth-service
             port:
               number: 3000
+      
       # - pathType: Prefix
       #   path: "/"
       #   backend:
