@@ -1,25 +1,25 @@
-# apiVersion: networking.k8s.io/v1
-# kind: Ingress
-# metadata:
-#   name: discord-ingress
-#   namespace: discord
-#   labels:
-#     name: discord-ingress
-#   annotations:
-#     nginx.ingress.kubernetes.io/rewrite-target: /
-#     nginx.ingress.kubernetes.io/ssl-redirect: "false"
-# spec:
-#   ingressClassName: nginx
-#   rules:
-#   - http:
-#       paths:
-#       - pathType: Prefix
-#         path: "/"
-#         backend:
-#           service:
-#             name: discord-auth-service
-#             port:
-#               number: 3000
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: discord-ingress
+  namespace: discord
+  labels:
+    name: discord-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: discord-auth-service
+            port:
+              number: 3000
       
       # - pathType: Prefix
       #   path: "/"
