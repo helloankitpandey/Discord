@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discord-auth
+  namespace: discord 
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: discord-auth
+  template: 
+    metadata:
+      labels:
+        app: discord-auth
+    spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres 5432; do echo waiting for postgres; sleep 2; done']
+        - name: init-migration
+          image: dubeyanand/auth-discord:latest
+          command: ["bunx", "prisma", "migrate", "deploy"]
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DATABASE_URL
+              value: "postgresql://user1:password1@postgres:5432/discord"
+            - name: NATS_URI
+              value: "nats://nats-service:4222"
+            - name: JWT_SECRET
+              value: "your-jwt-secret"
+
+        - name: init-test
+          image: dubeyanand/auth-discord:latest
+          command: ["/bin/sh", "-c", "bunx prisma generate && bunx prisma migrate deploy && bun test"]
+
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DATABASE_URL
+              value: "postgresql://user1:password1@postgres:5432/discord_test"
+            - name: NATS_URI
+              value: "nats://nats-service:4222"
+            - name: NATS_USER
+              value: "nats"
+            - name: NATS_PASSWORD
+              value: "password"
+            - name: JWT_SECRET
+              value: "your-jwt-secret"
+
+      containers:
+        - name: discord-auth
+          image: dubeyanand/auth-discord:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: DATABASE_URL
+              value: "postgresql://user1:password1@postgres:5432/discord"
+            - name: NATS_URI
+              value: "nats://nats-service:4222"
+            - name: JWT_SECRET
+              value: "your-jwt-secret"
+            - name: NATS_USER
+              value: "nats"
+            - name: NATS_PASSWORD
+              value: "password"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-statefulset
+  namespace: discord
+spec:
+  serviceName: postgresql
+  replicas: 1
+  selector:
+    matchLabels:
+      app: discord-auth-postgresql
+  template:
+    metadata:
+      labels:
+        app: discord-auth-postgresql
+    spec:
+      containers:
+        - name: postgresql
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_USER
+              value: "user1"
+            - name: POSTGRES_PASSWORD
+              value: "password1"
+            - name: POSTGRES_DB
+              value: "discord"
+            - name: PGDATA
+              value: "/var/lib/postgresql/data/pgdata"
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+          volumeMounts:
+            - name: storage-pvc
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: storage-pvc
+          persistentVolumeClaim:
+            claimName: storage-pvc
