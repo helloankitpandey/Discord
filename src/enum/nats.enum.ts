@@ -4,6 +4,6 @@ export enum Auth {
     USER_UPDATED = 'user:updated',
     USER_LOGIN = 'user:login',
     USER_LOGOUT = 'user:logout',
-    USER_GET_ALL = 'user:get-all',
-    USER_GET_SINGLE = 'user:get-single',
+    USER_GET_ALL = 'user:all',
+    USER_GET_SINGLE = 'user:single',
 }
